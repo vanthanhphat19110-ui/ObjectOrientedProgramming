@@ -145,7 +145,7 @@ public:
         inputDate = date;
     }
 
-    void display()
+    void display() const
     {
         cout << setw(20) << "- Tên sách" << ":" << title << ".\n"
              << setw(20) << "   + Tác giả" << ":" << author << ".\n"
@@ -235,7 +235,7 @@ public:
              {  if (a.getPrice() != b.getPrice()) return a.getPrice() < b.getPrice(); 
                 return a.getTitle() < b.getTitle(); });
         cout << "THE LIST OF BOOKS SORTED BY PRICE\n";
-        for (auto &b : temp)
+        for (const Book &b : temp)
             b.display();
     }
 
@@ -334,8 +334,156 @@ public:
         cart.push_back({*it, quantity});
         cout << "Successfully added to cart.\n";
     }
+
+    // Question 05.
+    void checkout(vector<CartItem> &cart, const string &orderFilename)
+    {
+        if (cart.empty())
+        {
+            cout << "Cart is empty.\n";
+            return;
+        }
+        cin.ignore();
+
+        string customerName;
+        cout << "Input customer's name: ";
+        cin >> customerName;
+        DateTime date = DateTime::getCurrentTime();
+
+        double total = 0;
+        stringstream orderDetail;
+        orderDetail << "==================================\n"
+                    << "Date: " << date.toString() << ".\n"
+                    << "Customer: " << customerName << ".\n"
+                    << "Detail:\n";
+        for (const CartItem &item : cart)
+        {
+            for (Book &book : data)
+            {
+                if (book.getIsbn() == item.book.getIsbn())
+                {
+                    book.setStockLevel(book.getStockLevel() - item.quantity);
+                    break;
+                }
+            }
+            double subTotal = item.book.getPrice() * item.quantity;
+            total += subTotal;
+            orderDetail << " - " << item.book.getTitle() << "x" << item.quantity << " = " << subTotal << "VND.\n";
+        }
+        orderDetail << "Total: " << total << "VND.\n";
+
+        string oldOrder = "";
+        ifstream input(orderFilename);
+        if (input)
+        {
+            string line;
+            while (getline(input, line))
+                oldOrder += line + "\n";
+        }
+        input.close();
+
+        ofstream output(orderFilename);
+        if (output)
+            output << orderDetail.str() << oldOrder;
+        output.close();
+
+        cart.clear();
+        cout << "Successful payment.\n";
+    }
+
+    // Question 06.
+    void displayLowStock(int k = 50)
+    {
+        cout << "THE LIST OF BOOKS WITH LOW STOCK\n";
+        bool isFound = false;
+        for (const Book &b : data)
+        {
+            if (b.getStockLevel() < k)
+            {
+                b.display();
+                isFound = true;
+            }
+        }
+
+        if (!isFound)
+            cout << "There are no books below stock level.\n";
+    }
 };
 
 int main()
 {
+    BookStore bookStore("HCMUS BookStore");
+
+    if (!bookStore.loadFromFile("HCMUSBookStore.txt"))
+        cerr << "ERROR! Cannot load from file: HCMUSBookStore.txt\n";
+
+    vector<CartItem> cart;
+    int choice;
+
+    do
+    {
+        cout << "============================== HCMUS BOOKSTORE ==============================\n"
+             << "1. Display books sorted by price.\n"
+             << "2. Display top k latest books.\n"
+             << "3. Import books.\n"
+             << "4. Add to cart.\n"
+             << "5. Payment.\n"
+             << "6. Display books with low stock.\n"
+             << "0. Exit.\n";
+        cout << "Your choice: ";
+        cin >> choice;
+
+        switch (choice)
+        {
+        case 1:
+        {
+            bookStore.displaySortedByPrice();
+            break;
+        }
+        case 2:
+        {
+            int k;
+            cout << "Input k: ";
+            cin >> k;
+            bookStore.displayTopKLatest();
+            break;
+        }
+        case 3:
+        {
+            bookStore.importBook();
+            break;
+        }
+        case 4:
+        {
+            bookStore.addToCart(cart);
+            break;
+        }
+        case 5:
+        {
+            bookStore.checkout(cart, "Orders.txt");
+            break;
+        }
+        case 6:
+        {
+            int k;
+            cout << "Input k: ";
+            cin >> k;
+            bookStore.displayLowStock(k);
+            break;
+        }
+        case 0:
+        {
+            bookStore.saveToFile("HCMUSBookStore.txt");
+            cout << "Goodbye. See you again.\n";
+            break;
+        }
+        default:
+        {
+            cerr << "ERROR! Your choice is not valid.\n";
+            break;
+        }
+        };
+    } while (choice != 0);
+
+    return 0;
 }
