@@ -165,6 +165,12 @@ public:
     }
 };
 
+struct CartItem
+{
+    Book book;
+    int quantity;
+};
+
 class BookStore
 {
 private:
@@ -267,7 +273,66 @@ public:
         }
         else
         {
+            string title, author, language;
+            int publishedYear, stockLevel;
+            double price;
+
+            cout << "Input title: ";
+            cin >> title;
+            cout << "Input author: ";
+            cin >> author;
+            cout << "Input language: ";
+            cin >> language;
+            cin.ignore();
+            cout << "Input published year: ";
+            cin >> publishedYear;
+            cout << "Input price: ";
+            cin >> price;
+            cout << "Input stock level: ";
+            cin >> stockLevel;
+            DateTime date = DateTime::getCurrentTime();
+
+            data.push_back(Book(isbn, title, author, language, publishedYear, price, stockLevel, date));
+            cout << "Successfully updated.\n";
         }
+    }
+
+    // Question 04.
+    void addToCart(vector<CartItem> &cart)
+    {
+        string isbn;
+        cout << "Input ISBN: ";
+        cin >> isbn;
+        cin.ignore();
+
+        auto it = find_if(data.begin(), data.end(), [&](const Book &b)
+                          { return b.getIsbn() == isbn; });
+
+        if (it == data.end())
+        {
+            cout << "This ISBN is not found.\n";
+            return;
+        }
+
+        int quantity;
+        cout << "Input quantity: ";
+        cin >> quantity;
+
+        if (quantity <= 0)
+        {
+            cerr << "ERROR! The quantiy must be greater than 0.\n";
+            return;
+        }
+
+        if (quantity > it->getStockLevel())
+        {
+            cerr << "ERROR! The stock is not enough.\n";
+            cout << "The current stock level: " << it->getStockLevel() << ".\n";
+            return;
+        }
+
+        cart.push_back({*it, quantity});
+        cout << "Successfully added to cart.\n";
     }
 };
 
