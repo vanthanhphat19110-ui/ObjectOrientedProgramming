@@ -1,6 +1,8 @@
 #include <iostream>
-#include <iomanip>
+#include <algorithm>
+#include <fstream>
 #include <sstream>
+#include <iomanip>
 #include <ctime>
 #include <vector>
 #include <string>
@@ -80,42 +82,55 @@ private:
     DateTime inputDate; // ngày nhập sách.
 
 public:
-    string getIsbn()
+    Book(const string &isbn, const string &title, const string &author, const string &language, int publishedYear,
+         double price, int stockLevel, const DateTime &inputDate)
+    {
+        this->isbn = isbn;
+        this->title = title;
+        this->author = author;
+        this->language = language;
+        this->publishedYear = publishedYear;
+        this->price = price;
+        this->stockLevel = stockLevel;
+        this->inputDate = inputDate;
+    }
+
+    string getIsbn() const
     {
         return isbn;
     }
 
-    string getTitle()
+    string getTitle() const
     {
         return title;
     }
 
-    string getAuthor()
+    string getAuthor() const
     {
         return author;
     }
 
-    string getLanguage()
+    string getLanguage() const
     {
         return language;
     }
 
-    int getPublishedYear()
+    int getPublishedYear() const
     {
         return publishedYear;
     }
 
-    double getPrice()
+    double getPrice() const
     {
         return price;
     }
 
-    int getStockLevel()
+    int getStockLevel() const
     {
         return stockLevel;
     }
 
-    DateTime getInputDate()
+    DateTime getInputDate() const
     {
         return inputDate;
     }
@@ -132,18 +147,20 @@ public:
 
     void display()
     {
-        cout << setw(15) << "- Mã sách" << ":" << isbn << ".\n"
-             << setw(15) << "- Tên sách" << ":" << title << ".\n"
-             << setw(15) << "- Tác giả" << ":" << author << ".\n"
-             << setw(15) << "- Ngôn ngữ" << ":" << language << ".\n"
-             << setw(15) << "- Năm xuất bản" << ":" << publishedYear << ".\n"
-             << setw(15) << "- Giá bán" << ":" << price << ".\n"
-             << setw(15) << "- Tồn kho" << ":" << stockLevel << ".\n";
+        cout << setw(20) << "- Tên sách" << ":" << title << ".\n"
+             << setw(20) << "   + Tác giả" << ":" << author << ".\n"
+             << setw(20) << "   + Ngôn ngữ" << ":" << language << ".\n"
+             << setw(20) << "   + Năm xuất bản" << ":" << publishedYear << ".\n"
+             << setw(20) << "   + Giá bán" << ":" << price << ".\n"
+             << setw(20) << "   + Tồn kho" << ":" << stockLevel << ".\n";
     }
 
     string toString()
     {
         stringstream ss;
+        ss << isbn << "," << title << "," << author << "," << language << ","
+           << to_string(publishedYear) << "," << to_string(price) << "," << to_string(stockLevel) << ","
+           << inputDate.toString();
         return ss.str();
     }
 };
@@ -155,6 +172,103 @@ private:
     vector<Book> data; // lưu trữ thông tin các sách mà nhà sách có.
 
 public:
+    BookStore(const string &name) : name(name) {};
+
+    bool loadFromFile(const string &filename)
+    {
+        ifstream input(filename);
+        if (!input)
+            return false;
+        data.clear();
+
+        string line;
+        while (getline(input, line))
+        {
+            if (line.empty())
+                continue;
+
+            stringstream ss;
+            string isbn, title, author, language, publishedYear, price, stockLevel, inputDate;
+
+            getline(ss, isbn, ',');
+            getline(ss, title, ',');
+            getline(ss, author, ',');
+            getline(ss, language, ',');
+            getline(ss, publishedYear, ',');
+            getline(ss, price, ',');
+            getline(ss, stockLevel, ',');
+            getline(ss, inputDate, ',');
+
+            int py = stoi(publishedYear); // py = published year
+            double cost = stod(price);
+            int stock = stoi(stockLevel);
+            int second, minute, hour, day, month, year;
+            sscanf(inputDate.c_str(), "%d:%d:%d, %d/%d/%d", &hour, &minute, &second, &day, &month, &year);
+            DateTime date(second, minute, hour, day, month, year);
+
+            data.push_back(Book(isbn, title, author, language, py, cost, stock, date));
+        }
+
+        input.close();
+        return true;
+    }
+
+    void saveToFile(const string &filename)
+    {
+        ofstream output(filename);
+        for (auto &b : data)
+            output << b.toString() << "\n";
+        output.close();
+    }
+
+    // Question 01.
+    void displaySortedByPrice()
+    {
+        vector<Book> temp = data;
+        sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
+             {  if (a.getPrice() != b.getPrice()) return a.getPrice() < b.getPrice(); 
+                return a.getTitle() < b.getTitle(); });
+        cout << "THE LIST OF BOOKS SORTED BY PRICE\n";
+        for (auto &b : temp)
+            b.display();
+    }
+
+    // Question 02.
+    void displayTopKLatest(int k = 10)
+    {
+        vector<Book> temp = data;
+        sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
+             { return b.getInputDate() < a.getInputDate(); });
+        cout << "THE LIST OF TOP " << k << " LASTEST BOOKS\n";
+        for (int i = 0; i < k; i++)
+            temp[i].display();
+    }
+
+    // Question 03.
+    void importBook()
+    {
+        string isbn;
+        cout << "Input ISBN: ";
+        cin >> isbn;
+        cin.ignore();
+
+        auto it = find_if(data.begin(), data.end(), [&](const Book &b)
+                          { return b.getIsbn() == isbn; });
+
+        if (it != data.end())
+        {
+            int addStock;
+            cout << "This book already existed.\n"
+                 << "Please input an additional quantity: ";
+            cin >> addStock;
+            it->setStockLevel(it->getStockLevel() + addStock);
+            it->setInputDate(DateTime::getCurrentTime());
+            cout << "Successfully updated.\n";
+        }
+        else
+        {
+        }
+    }
 };
 
 int main()
