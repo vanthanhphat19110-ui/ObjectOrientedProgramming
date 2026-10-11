@@ -256,7 +256,6 @@ public:
         string isbn;
         cout << "Input ISBN: ";
         cin >> isbn;
-        cin.ignore();
 
         auto it = find_if(data.begin(), data.end(), [&](const Book &b)
                           { return b.getIsbn() == isbn; });
@@ -283,7 +282,6 @@ public:
             cin >> author;
             cout << "Input language: ";
             cin >> language;
-            cin.ignore();
             cout << "Input published year: ";
             cin >> publishedYear;
             cout << "Input price: ";
