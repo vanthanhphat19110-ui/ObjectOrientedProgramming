@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <limits>
 #include <fstream>
 #include <sstream>
 #include <iomanip>
@@ -7,6 +8,12 @@
 #include <vector>
 #include <string>
 using namespace std;
+
+void clearInputBuffer()
+{
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+}
 
 class DateTime
 {
@@ -55,7 +62,7 @@ public:
         return second < other.second;
     }
 
-    string toString()
+    string toString() const
     {
         stringstream ss;
         ss << setfill('0')
@@ -75,10 +82,10 @@ string inputStringWithLimit(const string &prompt, int maxLength)
     while (true)
     {
         cout << prompt;
-        cin >> s;
+        getline(cin, s);
         if (!s.empty() && s.length() <= maxLength)
             return s;
-        cout << "ERROR! Max length: " << maxLength << ".\n";
+        cout << "- ERROR! Max length: " << maxLength << " and cannot be empty.\n";
     }
 }
 
@@ -108,55 +115,17 @@ public:
         this->inputDate = inputDate;
     }
 
-    string getIsbn() const
-    {
-        return isbn;
-    }
-
-    string getTitle() const
-    {
-        return title;
-    }
-
-    string getAuthor() const
-    {
-        return author;
-    }
-
-    string getLanguage() const
-    {
-        return language;
-    }
-
-    int getPublishedYear() const
-    {
-        return publishedYear;
-    }
-
-    double getPrice() const
-    {
-        return price;
-    }
-
-    int getStockLevel() const
-    {
-        return stockLevel;
-    }
-
-    DateTime getInputDate() const
-    {
-        return inputDate;
-    }
-
-    void setStockLevel(int stock)
-    {
-        stockLevel = stock;
-    }
-
-    void setInputDate(const DateTime &date)
-    {
-        inputDate = date;
-    }
+    // Getters and Setters.
+    string getIsbn() const { return isbn; }
+    string getTitle() const { return title; }
+    string getAuthor() const { return author; }
+    string getLanguage() const { return language; }
+    int getPublishedYear() const { return publishedYear; }
+    double getPrice() const { return price; }
+    int getStockLevel() const { return stockLevel; }
+    DateTime getInputDate() const { return inputDate; }
+    void setStockLevel(int stock) { stockLevel = stock; }
+    void setInputDate(const DateTime &date) { inputDate = date; }
 
     void display() const
     {
@@ -164,15 +133,15 @@ public:
              << setw(20) << "   + Author" << ":" << author << ".\n"
              << setw(20) << "   + Language" << ":" << language << ".\n"
              << setw(20) << "   + Publised year" << ":" << publishedYear << ".\n"
-             << setw(20) << "   + Price" << ":" << price << ".\n"
+             << setw(20) << "   + Price" << ":" << fixed << setprecision(0) << price << "VND.\n"
              << setw(20) << "   + Stock" << ":" << stockLevel << ".\n";
     }
 
-    string toString()
+    string toString() const
     {
         stringstream ss;
         ss << isbn << "," << title << "," << author << "," << language << ","
-           << to_string(publishedYear) << "," << to_string(price) << "," << to_string(stockLevel) << ","
+           << publishedYear << "," << fixed << setprecision(0) << price << "," << stockLevel << ","
            << inputDate.toString();
         return ss.str();
     }
@@ -206,7 +175,7 @@ public:
             if (line.empty())
                 continue;
 
-            stringstream ss;
+            stringstream ss(line);
             string isbn, title, author, language, publishedYear, price, stockLevel, inputDate;
 
             getline(ss, isbn, ',');
@@ -216,7 +185,7 @@ public:
             getline(ss, publishedYear, ',');
             getline(ss, price, ',');
             getline(ss, stockLevel, ',');
-            getline(ss, inputDate, ',');
+            getline(ss, inputDate);
 
             int py = stoi(publishedYear); // py = published year
             double cost = stod(price);
@@ -232,16 +201,16 @@ public:
         return true;
     }
 
-    void saveToFile(const string &filename)
+    void saveToFile(const string &filename) const
     {
         ofstream output(filename);
-        for (Book &b : data)
+        for (const Book &b : data)
             output << b.toString() << "\n";
         output.close();
     }
 
     // Request 01.
-    void displaySortedByPrice()
+    void displaySortedByPrice() const
     {
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
@@ -253,19 +222,21 @@ public:
     }
 
     // Request 02.
-    void displayTopKLatest(int ka = 10)
+    void displayTopKLatest(int ka = 10) const
     {
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
              { return b.getInputDate() < a.getInputDate(); });
         cout << "===================== THE LIST OF TOP " << ka << " LASTEST BOOKS ======================\n";
-        for (int i = 0; i < ka; i++)
+        int limit = min((size_t)ka, temp.size());
+        for (int i = 0; i < limit; i++)
             temp[i].display();
     }
 
     // Request 03.
     void importBook()
     {
+        clearInputBuffer();
         string isbn = inputStringWithLimit("--> Input ISBN: ", 13);
 
         auto it = find_if(data.begin(), data.end(), [&](const Book &b)
@@ -277,6 +248,18 @@ public:
             cout << "- This book already existed.\n"
                  << "- Please enter an additional quantity: ";
             cin >> addStock;
+
+            while (cin.fail() || addStock <= 0)
+            {
+                if (cin.fail())
+                {
+                    clearInputBuffer();
+                    cout << "- ERROR! The quantity must be a positive integer.\n";
+                }
+                cout << "- Please enter the quantity again: ";
+                cin >> addStock;
+            }
+
             it->setStockLevel(it->getStockLevel() + addStock);
             it->setInputDate(DateTime::getCurrentTime());
         }
@@ -289,7 +272,7 @@ public:
             string title = inputStringWithLimit("--> Input title: ", 100);
             string author = inputStringWithLimit("--> Input author: ", 100);
             cout << "--> Input language: ";
-            cin >> language;
+            getline(cin, language);
 
             cout << "--> Input published year: ";
             cin >> publishedYear;
@@ -297,7 +280,7 @@ public:
             {
                 if (cin.fail())
                 {
-                    cin.clear();
+                    clearInputBuffer();
                     cout << "- ERROR! The publised year must be a positive integer.\n";
                 }
                 cout << "- Please enter the publised year again: ";
@@ -310,7 +293,7 @@ public:
             {
                 if (cin.fail())
                 {
-                    cin.clear();
+                    clearInputBuffer();
                     cout << "- ERROR! The price must be greater than 1000 VND.\n";
                 }
                 cout << "- Please enter the price again: ";
@@ -323,7 +306,7 @@ public:
             {
                 if (cin.fail())
                 {
-                    cin.clear();
+                    clearInputBuffer();
                     cout << "- ERROR! The stock level must be a positive integer.\n";
                 }
                 cout << "- Please enter the stock level again: ";
@@ -340,6 +323,7 @@ public:
     // Request 04.
     void addToCart(vector<CartItem> &cart)
     {
+        clearInputBuffer();
         string isbn = inputStringWithLimit("--> Input ISBN: ", 13);
 
         auto it = find_if(data.begin(), data.end(), [&](const Book &b)
@@ -359,7 +343,7 @@ public:
         {
             if (cin.fail())
             {
-                cin.clear();
+                clearInputBuffer();
                 cout << "- ERROR! The quantity must be a positive integer.\n";
             }
             cout << "- Please enter the quantity again: ";
@@ -369,7 +353,7 @@ public:
         if (quantity > it->getStockLevel())
         {
             cerr << "- ERROR! The stock is not enough.\n";
-            cout << "- The current stock level: " << it->getStockLevel() << ".\n";
+            cout << "- Current stock: " << it->getStockLevel() << ".\n";
             return;
         }
 
@@ -386,14 +370,15 @@ public:
             return;
         }
 
+        clearInputBuffer();
         string customerName;
         cout << "--> Input customer's name: ";
-        cin >> customerName;
+        getline(cin, customerName);
         DateTime date = DateTime::getCurrentTime();
 
         double total = 0;
         stringstream orderDetail;
-        orderDetail << "=========================================================\n"
+        orderDetail << "======================== BILL ========================\n"
                     << "- Date: " << date.toString() << ".\n"
                     << "- Customer: " << customerName << ".\n"
                     << "- Detail:\n";
@@ -409,10 +394,10 @@ public:
             }
             double subTotal = item.book.getPrice() * item.quantity;
             total += subTotal;
-            orderDetail << "+ " << item.book.getTitle() << "x" << item.quantity << " = " << subTotal << "VND.\n";
+            orderDetail << "+ " << item.book.getTitle() << "x" << item.quantity << " = " << fixed << setprecision(0) << subTotal << "VND.\n";
         }
-        orderDetail << "- Total: " << total << "VND.\n"
-                    << "=========================================================\n";
+        orderDetail << "- Total: " << fixed << setprecision(0) << total << "VND.\n"
+                    << "======================================================\n";
 
         string oldOrder = "";
         ifstream input(orderFilename);
@@ -457,7 +442,7 @@ int main()
     BookStore bookStore("HCMUS BookStore");
 
     if (!bookStore.loadFromFile("HCMUSBookStore.txt"))
-        cerr << "ERROR! Cannot load from file: HCMUSBookStore.txt\n";
+        cout << "ERROR! Cannot load from file: HCMUSBookStore.txt\n";
 
     vector<CartItem> cart;
     int choice;
@@ -480,7 +465,7 @@ int main()
         {
             if (cin.fail())
             {
-                cin.clear();
+                clearInputBuffer();
                 cout << "- ERROR! The choice must be an integer from 0 to 6.\n";
             }
             cout << "- Please enter your choice again: ";
@@ -504,7 +489,7 @@ int main()
             {
                 if (cin.fail())
                 {
-                    cin.clear();
+                    clearInputBuffer();
                     cout << "- ERROR! The ka must be a positive integer.\n";
                 }
                 cout << "- Please enter ka again: ";
@@ -539,7 +524,7 @@ int main()
             {
                 if (cin.fail())
                 {
-                    cin.clear();
+                    clearInputBuffer();
                     cout << "- ERROR! The kb must be a positive integer.\n";
                 }
                 cout << "- Please enter kb again: ";
@@ -555,8 +540,6 @@ int main()
             cout << "Goodbye. See you again.\n";
             break;
         }
-        default:
-            break;
         };
     } while (choice != 0);
 
