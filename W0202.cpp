@@ -212,6 +212,12 @@ public:
     // Request 01.
     void displaySortedByPrice() const
     {
+        if (data.empty())
+        {
+            cout << "==> There are no books in the bookstore.\n";
+            return;
+        }
+
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
              {  if (a.getPrice() != b.getPrice()) return a.getPrice() < b.getPrice(); 
@@ -224,6 +230,12 @@ public:
     // Request 02.
     void displayTopKLatest(int ka = 10) const
     {
+        if (data.empty())
+        {
+            cout << "==> There are no books in the bookstore.\n";
+            return;
+        }
+
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
              { return b.getInputDate() < a.getInputDate(); });
@@ -366,7 +378,7 @@ public:
     {
         if (cart.empty())
         {
-            cout << "Cart is empty.\n";
+            cout << "==> The cart is empty.\n";
             return;
         }
 
@@ -419,8 +431,14 @@ public:
     }
 
     // Request 06.
-    void displayLowStock(int kb = 50)
+    void displayLowStock(int kb = 50) const
     {
+        if (data.empty())
+        {
+            cout << "==> There are no books in the bookstore.\n";
+            return;
+        }
+
         cout << "====================== THE LIST OF BOOKS WITH LOW STOCK ======================\n";
         bool isFound = false;
         for (const Book &b : data)
