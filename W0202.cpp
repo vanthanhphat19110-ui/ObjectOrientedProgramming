@@ -421,14 +421,15 @@ int main()
     do
     {
         cout << "============================== HCMUS BOOKSTORE ==============================\n"
-             << "1. Display books sorted by price.\n"
-             << "2. Display top k latest books.\n"
-             << "3. Import books.\n"
-             << "4. Add to cart.\n"
-             << "5. Payment.\n"
-             << "6. Display books with low stock.\n"
-             << "0. Exit.\n";
-        cout << "Your choice: ";
+             << "| 1. Display books sorted by price.                                         |\n"
+             << "| 2. Display top k latest books.                                            |\n"
+             << "| 3. Import books.                                                          |\n"
+             << "| 4. Add to cart.                                                           |\n"
+             << "| 5. Payment.                                                               |\n"
+             << "| 6. Display books with low stock.                                          |\n"
+             << "| 0. Exit.                                                                  |\n"
+             << "=============================================================================\n";
+        cout << "--> Your choice: ";
         cin >> choice;
 
         switch (choice)
