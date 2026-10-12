@@ -69,6 +69,19 @@ public:
     }
 };
 
+string inputStringWithLimit(const string &prompt, int maxLength)
+{
+    string s;
+    while (true)
+    {
+        cout << prompt;
+        cin >> s;
+        if (!s.empty() && s.length() <= maxLength)
+            return s;
+        cout << "ERROR! Max length: " << maxLength << ".\n";
+    }
+}
+
 class Book
 {
 private:
@@ -77,7 +90,7 @@ private:
     string author; // tên tác giả: tối đa 100 kí tự.
     string language;
     int publishedYear;
-    double price;
+    double price;       // VND
     int stockLevel;     // số lượng sách có trong nhà sách.
     DateTime inputDate; // ngày nhập sách.
 
@@ -147,12 +160,12 @@ public:
 
     void display() const
     {
-        cout << setw(20) << "- Tên sách" << ":" << title << ".\n"
-             << setw(20) << "   + Tác giả" << ":" << author << ".\n"
-             << setw(20) << "   + Ngôn ngữ" << ":" << language << ".\n"
-             << setw(20) << "   + Năm xuất bản" << ":" << publishedYear << ".\n"
-             << setw(20) << "   + Giá bán" << ":" << price << ".\n"
-             << setw(20) << "   + Tồn kho" << ":" << stockLevel << ".\n";
+        cout << setw(20) << "- Book" << ":" << title << ".\n"
+             << setw(20) << "   + Author" << ":" << author << ".\n"
+             << setw(20) << "   + Language" << ":" << language << ".\n"
+             << setw(20) << "   + Publised year" << ":" << publishedYear << ".\n"
+             << setw(20) << "   + Price" << ":" << price << ".\n"
+             << setw(20) << "   + Stock" << ":" << stockLevel << ".\n";
     }
 
     string toString()
@@ -222,40 +235,38 @@ public:
     void saveToFile(const string &filename)
     {
         ofstream output(filename);
-        for (auto &b : data)
+        for (Book &b : data)
             output << b.toString() << "\n";
         output.close();
     }
 
-    // Question 01.
+    // Request 01.
     void displaySortedByPrice()
     {
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
              {  if (a.getPrice() != b.getPrice()) return a.getPrice() < b.getPrice(); 
                 return a.getTitle() < b.getTitle(); });
-        cout << "THE LIST OF BOOKS SORTED BY PRICE\n";
+        cout << "===================== THE LIST OF BOOKS SORTED BY PRICE =====================\n";
         for (const Book &b : temp)
             b.display();
     }
 
-    // Question 02.
-    void displayTopKLatest(int k = 10)
+    // Request 02.
+    void displayTopKLatest(int ka = 10)
     {
         vector<Book> temp = data;
         sort(temp.begin(), temp.end(), [](const Book &a, const Book &b)
              { return b.getInputDate() < a.getInputDate(); });
-        cout << "THE LIST OF TOP " << k << " LASTEST BOOKS\n";
-        for (int i = 0; i < k; i++)
+        cout << "===================== THE LIST OF TOP " << ka << " LASTEST BOOKS ======================\n";
+        for (int i = 0; i < ka; i++)
             temp[i].display();
     }
 
-    // Question 03.
+    // Request 03.
     void importBook()
     {
-        string isbn;
-        cout << "Input ISBN: ";
-        cin >> isbn;
+        string isbn = inputStringWithLimit("--> Input ISBN: ", 13);
 
         auto it = find_if(data.begin(), data.end(), [&](const Book &b)
                           { return b.getIsbn() == isbn; });
@@ -263,77 +274,110 @@ public:
         if (it != data.end())
         {
             int addStock;
-            cout << "This book already existed.\n"
-                 << "Please input an additional quantity: ";
+            cout << "- This book already existed.\n"
+                 << "- Please enter an additional quantity: ";
             cin >> addStock;
             it->setStockLevel(it->getStockLevel() + addStock);
             it->setInputDate(DateTime::getCurrentTime());
-            cout << "Successfully updated.\n";
         }
-        else
+        else // not found
         {
-            string title, author, language;
+            string language;
             int publishedYear, stockLevel;
             double price;
 
-            cout << "Input title: ";
-            cin >> title;
-            cout << "Input author: ";
-            cin >> author;
-            cout << "Input language: ";
+            string title = inputStringWithLimit("--> Input title: ", 100);
+            string author = inputStringWithLimit("--> Input author: ", 100);
+            cout << "--> Input language: ";
             cin >> language;
-            cout << "Input published year: ";
+
+            cout << "--> Input published year: ";
             cin >> publishedYear;
-            cout << "Input price: ";
+            while (cin.fail() || publishedYear <= 0)
+            {
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cout << "- ERROR! The publised year must be a positive integer.\n";
+                }
+                cout << "- Please enter the publised year again: ";
+                cin >> publishedYear;
+            }
+
+            cout << "--> Input price: ";
             cin >> price;
-            cout << "Input stock level: ";
+            while (cin.fail() || price <= 1000)
+            {
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cout << "- ERROR! The price must be greater than 1000 VND.\n";
+                }
+                cout << "- Please enter the price again: ";
+                cin >> price;
+            }
+
+            cout << "--> Input stock level: ";
             cin >> stockLevel;
+            while (cin.fail() || stockLevel <= 0)
+            {
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cout << "- ERROR! The stock level must be a positive integer.\n";
+                }
+                cout << "- Please enter the stock level again: ";
+                cin >> stockLevel;
+            }
+
             DateTime date = DateTime::getCurrentTime();
 
             data.push_back(Book(isbn, title, author, language, publishedYear, price, stockLevel, date));
-            cout << "Successfully updated.\n";
         }
+        cout << "==> Successfully updated.\n";
     }
 
-    // Question 04.
+    // Request 04.
     void addToCart(vector<CartItem> &cart)
     {
-        string isbn;
-        cout << "Input ISBN: ";
-        cin >> isbn;
-        cin.ignore();
+        string isbn = inputStringWithLimit("--> Input ISBN: ", 13);
 
         auto it = find_if(data.begin(), data.end(), [&](const Book &b)
                           { return b.getIsbn() == isbn; });
 
         if (it == data.end())
         {
-            cout << "This ISBN is not found.\n";
+            cout << "==> This ISBN is not found.\n";
             return;
         }
 
         int quantity;
-        cout << "Input quantity: ";
+        cout << "--> Input quantity: ";
         cin >> quantity;
 
-        if (quantity <= 0)
+        while (cin.fail() || quantity <= 0)
         {
-            cerr << "ERROR! The quantiy must be greater than 0.\n";
-            return;
+            if (cin.fail())
+            {
+                cin.clear();
+                cout << "- ERROR! The quantity must be a positive integer.\n";
+            }
+            cout << "- Please enter the quantity again: ";
+            cin >> quantity;
         }
 
         if (quantity > it->getStockLevel())
         {
-            cerr << "ERROR! The stock is not enough.\n";
-            cout << "The current stock level: " << it->getStockLevel() << ".\n";
+            cerr << "- ERROR! The stock is not enough.\n";
+            cout << "- The current stock level: " << it->getStockLevel() << ".\n";
             return;
         }
 
         cart.push_back({*it, quantity});
-        cout << "Successfully added to cart.\n";
+        cout << "==> Successfully added to cart.\n";
     }
 
-    // Question 05.
+    // Request 05.
     void checkout(vector<CartItem> &cart, const string &orderFilename)
     {
         if (cart.empty())
@@ -341,19 +385,18 @@ public:
             cout << "Cart is empty.\n";
             return;
         }
-        cin.ignore();
 
         string customerName;
-        cout << "Input customer's name: ";
+        cout << "--> Input customer's name: ";
         cin >> customerName;
         DateTime date = DateTime::getCurrentTime();
 
         double total = 0;
         stringstream orderDetail;
-        orderDetail << "==================================\n"
-                    << "Date: " << date.toString() << ".\n"
-                    << "Customer: " << customerName << ".\n"
-                    << "Detail:\n";
+        orderDetail << "=========================================================\n"
+                    << "- Date: " << date.toString() << ".\n"
+                    << "- Customer: " << customerName << ".\n"
+                    << "- Detail:\n";
         for (const CartItem &item : cart)
         {
             for (Book &book : data)
@@ -366,9 +409,10 @@ public:
             }
             double subTotal = item.book.getPrice() * item.quantity;
             total += subTotal;
-            orderDetail << " - " << item.book.getTitle() << "x" << item.quantity << " = " << subTotal << "VND.\n";
+            orderDetail << "+ " << item.book.getTitle() << "x" << item.quantity << " = " << subTotal << "VND.\n";
         }
-        orderDetail << "Total: " << total << "VND.\n";
+        orderDetail << "- Total: " << total << "VND.\n"
+                    << "=========================================================\n";
 
         string oldOrder = "";
         ifstream input(orderFilename);
@@ -386,17 +430,17 @@ public:
         output.close();
 
         cart.clear();
-        cout << "Successful payment.\n";
+        cout << "==> Successful payment.\n";
     }
 
-    // Question 06.
-    void displayLowStock(int k = 50)
+    // Request 06.
+    void displayLowStock(int kb = 50)
     {
-        cout << "THE LIST OF BOOKS WITH LOW STOCK\n";
+        cout << "====================== THE LIST OF BOOKS WITH LOW STOCK ======================\n";
         bool isFound = false;
         for (const Book &b : data)
         {
-            if (b.getStockLevel() < k)
+            if (b.getStockLevel() < kb)
             {
                 b.display();
                 isFound = true;
@@ -404,7 +448,7 @@ public:
         }
 
         if (!isFound)
-            cout << "There are no books below stock level.\n";
+            cout << "==> There are no books below stock level.\n";
     }
 };
 
@@ -432,6 +476,17 @@ int main()
         cout << "--> Your choice: ";
         cin >> choice;
 
+        while (cin.fail() || choice < 0 || choice > 6)
+        {
+            if (cin.fail())
+            {
+                cin.clear();
+                cout << "- ERROR! The choice must be an integer from 0 to 6.\n";
+            }
+            cout << "- Please enter your choice again: ";
+            cin >> choice;
+        }
+
         switch (choice)
         {
         case 1:
@@ -441,10 +496,22 @@ int main()
         }
         case 2:
         {
-            int k;
-            cout << "Input k: ";
-            cin >> k;
-            bookStore.displayTopKLatest();
+            int ka;
+            cout << "--> Input ka: ";
+            cin >> ka;
+
+            while (cin.fail() || ka <= 0)
+            {
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cout << "- ERROR! The ka must be a positive integer.\n";
+                }
+                cout << "- Please enter ka again: ";
+                cin >> ka;
+            }
+
+            bookStore.displayTopKLatest(ka);
             break;
         }
         case 3:
@@ -464,10 +531,22 @@ int main()
         }
         case 6:
         {
-            int k;
-            cout << "Input k: ";
-            cin >> k;
-            bookStore.displayLowStock(k);
+            int kb;
+            cout << "--> Input kb: ";
+            cin >> kb;
+
+            while (cin.fail() || kb <= 0)
+            {
+                if (cin.fail())
+                {
+                    cin.clear();
+                    cout << "- ERROR! The kb must be a positive integer.\n";
+                }
+                cout << "- Please enter kb again: ";
+                cin >> kb;
+            }
+
+            bookStore.displayLowStock(kb);
             break;
         }
         case 0:
@@ -477,10 +556,7 @@ int main()
             break;
         }
         default:
-        {
-            cerr << "ERROR! Your choice is not valid.\n";
             break;
-        }
         };
     } while (choice != 0);
 
