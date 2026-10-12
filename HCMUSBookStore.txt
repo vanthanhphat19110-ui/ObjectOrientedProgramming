@@ -1,0 +1,7 @@
+VNUHCMUS00001,How to learn OOP,Van Thanh Phat,Vietnamese,2026,99000,51,12:43:04,12/10/2026
+VNUHCMUS00002,How to learn DSA,Nguyen Van An,Vietnamese,2024,129000,6,12:06:50,12/10/2026
+VNUHCMUS00003,How to learn Calculus,Tran Thi B,Vietnamese,2020,35000,3,12:08:16,12/10/2026
+VNUHCMUS00004,How to learn Linear Algebra,Nguyen Hoang Quan,Vietnamese,2025,100000,15,12:15:24,12/10/2026
+VNUHCMUS00005,How to learn General Physics,Hong Wang,Chinese,2025,135000,15,12:17:29,12/10/2026
+VNUHCMUS00006,How to learn FOP,Alex Firmino,English,2023,119000,5,12:29:03,12/10/2026
+VNUHCMUS00007,How to learn Automata,Jessica Fugosiro,English,2020,145000,35,12:39:03,12/10/2026

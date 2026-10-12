@@ -1,0 +1,33 @@
+======================== BILL ========================
+- Date: 12:47:22,12/10/2026.
+- Customer: Joseph Joestar.
+- Detail:
++ How to learn DSA x 14 = 1806000 VND.
++ How to learn Calculus x 13 = 455000 VND.
+- Total: 2261000 VND.
+======================================================
+======================== BILL ========================
+- Date: 12:40:42,12/10/2026.
+- Customer: Kujo Jotaro.
+- Detail:
++ How to learn Linear Algebra x 15 = 1500000 VND.
++ How to learn OOP x 4 = 396000 VND.
+- Total: 1896000 VND.
+======================================================
+======================== BILL ========================
+- Date: 12:33:24,12/10/2026.
+- Customer: Mr.VTP10.
+- Detail:
++ How to learn General Physics x 20 = 2700000 VND.
++ How to learn FOP x 10 = 1190000 VND.
++ How to learn Calculus x 4 = 140000 VND.
+- Total: 4030000 VND.
+======================================================
+======================== BILL ========================
+- Date: 12:23:40,12/10/2026.
+- Customer: Mr.Beast.
+- Detail:
++ How to learn OOP x 5 = 495000VND.
++ How to learn DSA x 10 = 1290000VND.
+- Total: 1785000VND.
+======================================================
