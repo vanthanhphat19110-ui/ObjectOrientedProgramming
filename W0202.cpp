@@ -129,12 +129,12 @@ public:
 
     void display() const
     {
-        cout << setw(20) << "- Book" << ":" << title << ".\n"
-             << setw(20) << "   + Author" << ":" << author << ".\n"
-             << setw(20) << "   + Language" << ":" << language << ".\n"
-             << setw(20) << "   + Publised year" << ":" << publishedYear << ".\n"
-             << setw(20) << "   + Price" << ":" << fixed << setprecision(0) << price << "VND.\n"
-             << setw(20) << "   + Stock" << ":" << stockLevel << ".\n";
+        cout << "- Book: " << title << ".\n"
+             << "   + Author: " << author << ".\n"
+             << "   + Language: " << language << ".\n"
+             << "   + Publised year: " << publishedYear << ".\n"
+             << "   + Price: " << fixed << setprecision(0) << price << " VND.\n"
+             << "   + Stock: " << stockLevel << ".\n";
     }
 
     string toString() const
@@ -406,9 +406,9 @@ public:
             }
             double subTotal = item.book.getPrice() * item.quantity;
             total += subTotal;
-            orderDetail << "+ " << item.book.getTitle() << "x" << item.quantity << " = " << fixed << setprecision(0) << subTotal << "VND.\n";
+            orderDetail << "+ " << item.book.getTitle() << " x " << item.quantity << " = " << fixed << setprecision(0) << subTotal << " VND.\n";
         }
-        orderDetail << "- Total: " << fixed << setprecision(0) << total << "VND.\n"
+        orderDetail << "- Total: " << fixed << setprecision(0) << total << " VND.\n"
                     << "======================================================\n";
 
         string oldOrder = "";
@@ -555,7 +555,7 @@ int main()
         case 0:
         {
             bookStore.saveToFile("HCMUSBookStore.txt");
-            cout << "Goodbye. See you again.\n";
+            cout << "==> Goodbye. See you again.\n";
             break;
         }
         };
