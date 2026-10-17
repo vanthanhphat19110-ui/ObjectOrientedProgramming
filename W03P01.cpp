@@ -7,6 +7,8 @@ private:
     int num, denom;
 
 public:
+    Fraction() : num(0), denom(1) {};
+
     Fraction(int tu, int mau) : num(tu), denom(mau) {};
 
     string toString() { return to_string(num) + "/" + to_string(denom); }
@@ -20,13 +22,39 @@ public:
 
     Fraction operator+(int x) const { return Fraction(num + denom * x, denom); }
 
+    // Hàm friend: cho phép truy cập vào private của class.
+    friend Fraction operator+(int x, const Fraction &f);
+
     Fraction &operator+=(const Fraction &other)
     {
         num = num * other.denom + denom * other.num;
         denom = denom * other.denom;
         return *this;
     }
+
+    Fraction &operator+=(int x)
+    {
+        num = num + denom * x;
+        return *this;
+    }
+
+    friend istream &operator>>(istream &in, Fraction &f);
+    friend ostream &operator<<(ostream &out, const Fraction &f);
 };
+
+Fraction operator+(int x, const Fraction &f) { return Fraction(x * f.denom + f.num, f.denom); }
+
+istream &operator>>(istream &in, Fraction &f)
+{
+    in >> f.num >> f.denom;
+    return in;
+}
+
+ostream &operator<<(ostream &out, const Fraction &f)
+{
+    out << f.num << "/" << f.denom;
+    return out;
+}
 
 int main()
 {
@@ -50,4 +78,22 @@ int main()
 
     // Kết quả:
     // p7 = 44/5.
+
+    // Fraction p8(5, 6);
+    // Fraction p9 = 5 + p8;
+    // cout << "p9 = " << p9.toString() << ".\n";
+
+    // Kết quả:
+    // p9 = 35/6.
+
+    // Fraction p10, p11;
+    // cout << "Input p10, p11: ";
+    // cin >> p10 >> p11;
+    // cout << "p10 = " << p10 << ", p11 = " << p11 << ".\n";
+
+    // Kết quả:
+    // Input p10, p11: 4 5 9 10
+    // p10 = 4/5, p11 = 9/10.
+
+    return 0;
 }
