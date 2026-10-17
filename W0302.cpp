@@ -1,3 +1,6 @@
+/* Trong suốt quá trình thực hiện bài tập, sinh viên không sử dụng bất kỳ công cụ AI
+dưới bất kỳ hình thức nào. */
+
 #include <iostream>
 #include <cstring>
 using namespace std;
