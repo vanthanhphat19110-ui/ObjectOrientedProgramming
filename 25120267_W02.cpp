@@ -37,29 +37,29 @@ private:
     int m_Length;
 
 public:
-    CIntArray();                       // Finished
-    CIntArray(const CIntArray &other); // Finished
-    CIntArray(int n);                  // Finished
-    ~CIntArray();                      // Finished
+    CIntArray();
+    CIntArray(const CIntArray &other);
+    CIntArray(int n);
+    ~CIntArray();
 
-    void InputArray();  // Finished
-    void OutputArray(); // Finished
+    void InputArray();
+    void OutputArray();
 
-    CIntArray Remove();                            // Finished
-    CIntArray Remove(int k);                       // Finished
-    CIntArray Remove(int k, int n);                // Finished
-    CIntArray Replace(int oldValue, int newValue); // Finished
+    CIntArray Remove();
+    CIntArray Remove(int k);
+    CIntArray Remove(int k, int n);
+    CIntArray Replace(int oldValue, int newValue);
 
-    CIntArray AddHead(int value);       // Finished
-    CIntArray AddTail(int value);       // Finished
-    CIntArray Insert(int k, int value); // Finished
+    CIntArray AddHead(int value);
+    CIntArray AddTail(int value);
+    CIntArray Insert(int k, int value);
 
-    int Max(); // Finished
-    int Min(); // Finished
+    int Max();
+    int Min();
 
-    CIntArray Ascending();  // Finished
-    CIntArray Descending(); // Finished
-    bool IsSymmetry();      // Finished
+    CIntArray Ascending();
+    CIntArray Descending();
+    bool IsSymmetry();
 
     CIntArray MoveForward();
     CIntArray MoveForward(int n);
@@ -67,18 +67,16 @@ public:
     CIntArray MoveBehind();
     CIntArray MoveBehind(int n);
 
-    CIntArray Invert();        // Finished
-    int Appearance(int value); // Finished
+    CIntArray Invert();
+    int Appearance(int value);
 };
 
-// Checked
 CIntArray::CIntArray()
 {
     m_Array = nullptr;
     m_Length = 0;
 }
 
-// Checked
 CIntArray::CIntArray(const CIntArray &other)
 {
     m_Length = other.m_Length;
@@ -88,14 +86,12 @@ CIntArray::CIntArray(const CIntArray &other)
         m_Array[i] = other.m_Array[i];
 }
 
-// Checked
 CIntArray::CIntArray(int n)
 {
     m_Length = n;
     m_Array = new int[m_Length]{0};
 }
 
-// Checked
 CIntArray::~CIntArray()
 {
     if (m_Array != nullptr)
@@ -106,7 +102,6 @@ CIntArray::~CIntArray()
     }
 }
 
-// Checked
 void CIntArray::InputArray()
 {
     if (m_Array != nullptr)
@@ -125,7 +120,6 @@ void CIntArray::InputArray()
         m_Array[i] = rand() % (2 * 99 + 1) - 99;
 }
 
-// Checked
 void CIntArray::OutputArray()
 {
     cout << "- Array: ";
@@ -134,7 +128,6 @@ void CIntArray::OutputArray()
     cout << m_Array[m_Length - 1] << ".\n";
 }
 
-// Checked
 int CIntArray::Max()
 {
     if (m_Array == nullptr)
@@ -153,7 +146,6 @@ int CIntArray::Max()
     return max;
 }
 
-// Checked
 int CIntArray::Min()
 {
     if (m_Array == nullptr)
@@ -172,7 +164,6 @@ int CIntArray::Min()
     return min;
 }
 
-// Checked
 bool CIntArray::IsSymmetry()
 {
     if (m_Array == nullptr)
@@ -187,7 +178,6 @@ bool CIntArray::IsSymmetry()
     return true;
 }
 
-// Checked
 CIntArray CIntArray::Invert()
 {
     if (m_Array == nullptr)
@@ -203,7 +193,6 @@ CIntArray CIntArray::Invert()
     return ans;
 }
 
-// Checked
 int CIntArray::Appearance(int value)
 {
     if (m_Array == nullptr)
@@ -219,7 +208,6 @@ int CIntArray::Appearance(int value)
     return count;
 }
 
-// Checked
 CIntArray CIntArray::Ascending()
 {
     if (m_Array == nullptr)
@@ -234,7 +222,6 @@ CIntArray CIntArray::Ascending()
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::Descending()
 {
     if (m_Array == nullptr)
@@ -243,7 +230,6 @@ CIntArray CIntArray::Descending()
     return temp.Invert();
 }
 
-// Checked
 CIntArray CIntArray::Replace(int oldValue, int newValue)
 {
     if (m_Array == nullptr)
@@ -268,7 +254,6 @@ CIntArray CIntArray::Replace(int oldValue, int newValue)
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::Remove()
 {
     if (m_Array == nullptr)
@@ -310,7 +295,6 @@ CIntArray CIntArray::Remove()
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::Remove(int k)
 {
     if (m_Array == nullptr)
@@ -339,7 +323,6 @@ CIntArray CIntArray::Remove(int k)
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::Remove(int k, int n)
 {
     if (m_Array == nullptr)
@@ -369,7 +352,6 @@ CIntArray CIntArray::Remove(int k, int n)
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::AddHead(int value)
 {
     if (value < -99 || value > 99)
@@ -393,7 +375,6 @@ CIntArray CIntArray::AddHead(int value)
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::AddTail(int value)
 {
     if (value < -99 || value > 99)
@@ -419,7 +400,6 @@ CIntArray CIntArray::AddTail(int value)
     return ans;
 }
 
-// Checked
 CIntArray CIntArray::Insert(int k, int value)
 {
     if (k < 0 || k > m_Length)
