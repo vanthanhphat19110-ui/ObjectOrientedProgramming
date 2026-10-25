@@ -281,22 +281,30 @@ CIntArray CIntArray::Remove()
     int countUnique = 0;
     for (int i = 0; i < m_Length; i++)
     {
-        if (existed[m_Array[i] + 99] == false)
+        int index = m_Array[i] + 99;
+        if (existed[index] == false)
         {
-            existed[m_Array[i] + 99] == true;
+            existed[index] = true;
             countUnique++;
         }
     }
+
+    for (int i = 0; i < 199; i++)
+        existed[i] = false;
 
     CIntArray ans;
     ans.m_Length = countUnique;
     ans.m_Array = new int[ans.m_Length];
 
     int j = 0;
-    for (int i = 0; i < 199; i++)
+    for (int i = 0; i < m_Length; i++)
     {
-        if (existed[i] == true)
-            m_Array[j++] = i - 99;
+        int index = m_Array[i] + 99;
+        if (existed[index] == false)
+        {
+            existed[index] = true;
+            ans.m_Array[j++] = m_Array[i];
+        }
     }
 
     return ans;
@@ -346,22 +354,17 @@ CIntArray CIntArray::Remove(int k, int n)
         return *this;
     }
 
+    int countActualRemove = ((k + n) > m_Length) ? (m_Length - k) : n;
     CIntArray ans;
-    ans.m_Length = m_Length;
+    ans.m_Length = m_Length - countActualRemove;
     ans.m_Array = new int[ans.m_Length];
 
-    int j = 0, size = 0;
+    int j = 0;
     for (int i = 0; i < m_Length; i++)
     {
-        if (i != k)
-        {
+        if (i < k || i >= k + countActualRemove)
             ans.m_Array[j++] = m_Array[i];
-            size++;
-        }
-        else
-            i += n - 1;
     }
-    ans.m_Length = size;
 
     return ans;
 }
@@ -458,7 +461,7 @@ CIntArray CIntArray::Insert(int k, int value)
 
 CIntArray CIntArray::MoveForward(int n)
 {
-    if (m_Array == nullptr)
+    if (m_Array == nullptr || m_Length == 0)
     {
         cout << "ERROR: Array is empty.\n";
         return *this;
@@ -488,7 +491,7 @@ CIntArray CIntArray::MoveForward()
 
 CIntArray CIntArray::MoveBehind(int n)
 {
-    if (m_Array == nullptr)
+    if (m_Array == nullptr || m_Length == 0)
     {
         cout << "ERROR: Array is empty.\n";
         return *this;
