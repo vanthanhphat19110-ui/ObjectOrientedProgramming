@@ -39,6 +39,7 @@ private:
 public:
     CIntArray();
     CIntArray(const CIntArray &other);
+    CIntArray &operator=(const CIntArray &other);
     CIntArray(int n);
     ~CIntArray();
 
@@ -86,6 +87,27 @@ CIntArray::CIntArray(const CIntArray &other)
         m_Array[i] = other.m_Array[i];
 }
 
+CIntArray &CIntArray::operator=(const CIntArray &other)
+{
+    if (this == &other)
+        return *this;
+
+    if (m_Array != nullptr)
+    {
+        delete[] m_Array;
+        m_Array = nullptr;
+        m_Length = 0;
+    }
+
+    m_Length = other.m_Length;
+    m_Array = new int[m_Length];
+
+    for (int i = 0; i < m_Length; i++)
+        m_Array[i] = other.m_Array[i];
+
+    return *this;
+}
+
 CIntArray::CIntArray(int n)
 {
     m_Length = n;
@@ -122,6 +144,12 @@ void CIntArray::InputArray()
 
 void CIntArray::OutputArray()
 {
+    if (m_Array == nullptr || m_Length == 0)
+    {
+        cout << "- Array: empty.\n";
+        return;
+    }
+
     cout << "- Array: ";
     for (int i = 0; i < m_Length - 1; i++)
         cout << m_Array[i] << ", ";
