@@ -612,5 +612,11 @@ int main()
     temp = test.MoveBehind(n);
     temp.OutputArray();
 
+    cout << "- Invert(): ";
+    temp = test.Invert();
+    temp.OutputArray();
+
+    cout << "- Appearance(value): " << test.Appearance(value) << ".\n";
+
     return 0;
 }
