@@ -146,11 +146,10 @@ void CIntArray::OutputArray()
 {
     if (m_Array == nullptr || m_Length == 0)
     {
-        cout << "- Array: empty.\n";
+        cout << "empty.\n";
         return;
     }
 
-    cout << "- Array: ";
     for (int i = 0; i < m_Length - 1; i++)
         cout << m_Array[i] << ", ";
     cout << m_Array[m_Length - 1] << ".\n";
@@ -533,6 +532,8 @@ int main()
     CIntArray test, temp;
 
     test.InputArray();
+
+    cout << "- Array: ";
     test.OutputArray();
 
     cout << "- Remove(): ";
