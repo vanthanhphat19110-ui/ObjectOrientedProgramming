@@ -1,4 +1,5 @@
 #include <iostream>
+#include <stdlib.h>
 using namespace std;
 
 void merge(int *arr, int *temp, int sizeArr, int left, int mid, int right)
@@ -44,14 +45,14 @@ public:
     void InputArray();  // Finished
     void OutputArray(); // Finished
 
-    CIntArray Remove();
-    CIntArray Remove(int k);
-    CIntArray Remove(int k, int n);
+    CIntArray Remove();                            // Finished
+    CIntArray Remove(int k);                       // Finished
+    CIntArray Remove(int k, int n);                // Finished
     CIntArray Replace(int oldValue, int newValue); // Finished
 
-    CIntArray AddHead(int value);
-    CIntArray AddTail(int value);
-    CIntArray Insert(int k, int value);
+    CIntArray AddHead(int value);       // Finished
+    CIntArray AddTail(int value);       // Finished
+    CIntArray Insert(int k, int value); // Finished
 
     int Max(); // Finished
     int Min(); // Finished
@@ -70,12 +71,14 @@ public:
     int Appearance(int value); // Finished
 };
 
+// Checked
 CIntArray::CIntArray()
 {
     m_Array = nullptr;
     m_Length = 0;
 }
 
+// Checked
 CIntArray::CIntArray(const CIntArray &other)
 {
     m_Length = other.m_Length;
@@ -85,12 +88,14 @@ CIntArray::CIntArray(const CIntArray &other)
         m_Array[i] = other.m_Array[i];
 }
 
+// Checked
 CIntArray::CIntArray(int n)
 {
     m_Length = n;
     m_Array = new int[m_Length]{0};
 }
 
+// Checked
 CIntArray::~CIntArray()
 {
     if (m_Array != nullptr)
@@ -101,6 +106,7 @@ CIntArray::~CIntArray()
     }
 }
 
+// Checked
 void CIntArray::InputArray()
 {
     cout << "- Input length: ";
@@ -108,9 +114,10 @@ void CIntArray::InputArray()
 
     cout << "- Input array: ";
     for (int i = 0; i < m_Length; i++)
-        cin >> m_Array[i];
+        m_Array[i] = rand() % (2 * 99 + 1) - 99;
 }
 
+// Checked
 void CIntArray::OutputArray()
 {
     cout << "- Array: ";
@@ -119,6 +126,7 @@ void CIntArray::OutputArray()
     cout << m_Array[m_Length - 1] << ".\n";
 }
 
+// Checked
 int CIntArray::Max()
 {
     if (m_Array == nullptr)
@@ -133,9 +141,11 @@ int CIntArray::Max()
         if (m_Array[i] > max)
             max = m_Array[i];
     }
+
     return max;
 }
 
+// Checked
 int CIntArray::Min()
 {
     if (m_Array == nullptr)
@@ -150,9 +160,11 @@ int CIntArray::Min()
         if (m_Array[i] < min)
             min = m_Array[i];
     }
+
     return min;
 }
 
+// Checked
 bool CIntArray::IsSymmetry()
 {
     if (m_Array == nullptr)
@@ -163,9 +175,11 @@ bool CIntArray::IsSymmetry()
         if (m_Array[i] != m_Array[m_Length - 1 - i])
             return false;
     }
+
     return true;
 }
 
+// Checked
 CIntArray CIntArray::Invert()
 {
     if (m_Array == nullptr)
@@ -181,6 +195,7 @@ CIntArray CIntArray::Invert()
     return ans;
 }
 
+// Checked
 int CIntArray::Appearance(int value)
 {
     if (m_Array == nullptr)
@@ -196,6 +211,7 @@ int CIntArray::Appearance(int value)
     return count;
 }
 
+// Checked
 CIntArray CIntArray::Ascending()
 {
     if (m_Array == nullptr)
@@ -210,6 +226,7 @@ CIntArray CIntArray::Ascending()
     return ans;
 }
 
+// Checked
 CIntArray CIntArray::Descending()
 {
     if (m_Array == nullptr)
@@ -218,10 +235,20 @@ CIntArray CIntArray::Descending()
     return temp.Invert();
 }
 
+// Checked
 CIntArray CIntArray::Replace(int oldValue, int newValue)
 {
     if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
         return *this;
+    }
+
+    if (newValue < -99 || newValue > 99)
+    {
+        cout << "ERROR: Value is not in range [-99,99].\n";
+        return *this;
+    }
 
     CIntArray ans(*this);
     for (int i = 0; i < m_Length; i++)
@@ -229,17 +256,225 @@ CIntArray CIntArray::Replace(int oldValue, int newValue)
         if (m_Array[i] == oldValue)
             ans.m_Array[i] = newValue;
     }
+
     return ans;
 }
 
+// Checked
+CIntArray CIntArray::Remove()
+{
+    if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
+        return *this;
+    }
+
+    bool existed[199] = {false};
+    CIntArray ans;
+    ans.m_Length = m_Length;
+    ans.m_Array = new int[ans.m_Length];
+
+    int j = 0;
+    for (int i = 0; i < m_Length; i++)
+    {
+        if (existed[m_Array[i] + 99] == false)
+        {
+            existed[m_Array[i] + 99] = true;
+            ans.m_Array[j++] = m_Array[i];
+        }
+    }
+
+    return ans;
+}
+
+// Checked
 CIntArray CIntArray::Remove(int k)
 {
     if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
         return *this;
+    }
+
+    if (k < 0 || k >= m_Length)
+    {
+        cout << "ERROR: Position is not valid.\n";
+        return *this;
+    }
 
     CIntArray ans;
     ans.m_Length = m_Length - 1;
     ans.m_Array = new int[ans.m_Length];
+
+    int j = 0;
+    for (int i = 0; i < m_Length; i++)
+    {
+        if (i != k)
+            ans.m_Array[j++] = m_Array[i];
+    }
+
+    return ans;
+}
+
+// Checked
+CIntArray CIntArray::Remove(int k, int n)
+{
+    if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
+        return *this;
+    }
+
+    if (k < 0 || k >= m_Length || n <= 0)
+    {
+        cout << "ERROR: Position is not valid.\n";
+        return *this;
+    }
+
+    CIntArray ans;
+    ans.m_Length = m_Length;
+    ans.m_Array = new int[ans.m_Length];
+
+    int j = 0;
+    for (int i = 0; i < m_Length; i++)
+    {
+        if (i != k)
+            ans.m_Array[j++] = m_Array[i];
+        else
+            i += n - 1;
+    }
+
+    return ans;
+}
+
+// Checked
+CIntArray CIntArray::AddHead(int value)
+{
+    if (value < -99 || value > 99)
+    {
+        cout << "ERROR: Value is not in range [-99,99].\n";
+        return *this;
+    }
+
+    CIntArray ans;
+    ans.m_Length = m_Length + 1;
+    ans.m_Array = new int[ans.m_Length];
+    ans.m_Array[0] = value;
+
+    if (m_Array == nullptr)
+        return ans;
+
+    int j = 1;
+    for (int i = 0; i < m_Length; i++)
+        ans.m_Array[j++] = m_Array[i];
+
+    return ans;
+}
+
+// Checked
+CIntArray CIntArray::AddTail(int value)
+{
+    if (value < -99 || value > 99)
+    {
+        cout << "ERROR: Value is not in range [-99,99].\n";
+        return *this;
+    }
+
+    CIntArray ans;
+    ans.m_Length = m_Length + 1;
+    ans.m_Array = new int[ans.m_Length];
+
+    if (m_Array == nullptr)
+    {
+        ans.m_Array[0] = value;
+        return ans;
+    }
+
+    for (int i = 0; i < m_Length; i++)
+        ans.m_Array[i] = m_Array[i];
+    ans.m_Array[ans.m_Length] = value;
+
+    return ans;
+}
+
+// Checked
+CIntArray CIntArray::Insert(int k, int value)
+{
+    if (k < 0 || k > m_Length)
+    {
+        cout << "ERROR: Position is not valid.\n";
+        return *this;
+    }
+
+    if (value < -99 || value > 99)
+    {
+        cout << "ERROR: Value is not in range [-99,99].\n";
+        return *this;
+    }
+
+    if (k == 0)
+        return this->AddHead(value);
+
+    if (k == m_Length)
+        return this->AddTail(value);
+
+    CIntArray ans;
+    ans.m_Length = m_Length + 1;
+    ans.m_Array = new int[ans.m_Length];
+
+    int j = 0;
+    for (int i = 0; i < m_Length; i++)
+    {
+        if (j != k)
+            ans.m_Array[j++] = m_Array[i];
+        else
+        {
+            ans.m_Array[j++] = value;
+            i--;
+        }
+    }
+
+    return ans;
+}
+
+CIntArray CIntArray::MoveForward(int n)
+{
+    if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
+        return *this;
+    }
+
+    if (n < 0)
+    {
+        cout << "ERROR: n < 0.\n";
+        return *this;
+    }
+}
+
+CIntArray CIntArray::MoveForward()
+{
+    return this->MoveForward(1);
+}
+
+CIntArray CIntArray::MoveBehind(int n)
+{
+    if (m_Array == nullptr)
+    {
+        cout << "ERROR: Array is empty.\n";
+        return *this;
+    }
+
+    if (n < 0)
+    {
+        cout << "ERROR: n < 0.\n";
+        return *this;
+    }
+}
+
+CIntArray CIntArray::MoveBehind()
+{
+    return this->MoveBehind(1);
 }
 
 int main()
