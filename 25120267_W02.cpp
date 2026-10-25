@@ -1,5 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
+#include <ctime>
 using namespace std;
 
 void merge(int *arr, int *temp, int sizeArr, int left, int mid, int right)
@@ -137,7 +138,6 @@ void CIntArray::InputArray()
     cin >> m_Length;
     m_Array = new int[m_Length];
 
-    cout << "- Input array: ";
     for (int i = 0; i < m_Length; i++)
         m_Array[i] = rand() % (2 * 99 + 1) - 99;
 }
@@ -529,4 +529,87 @@ CIntArray CIntArray::MoveBehind()
 
 int main()
 {
+    srand(time(0));
+    CIntArray test, temp;
+
+    test.InputArray();
+    test.OutputArray();
+
+    cout << "- Remove(): ";
+    temp = test.Remove();
+    temp.OutputArray();
+
+    int k, n;
+    cout << "- Input k: ";
+    cin >> k;
+    cout << "- Input n: ";
+    cin >> n;
+
+    cout << "- Remove(k): ";
+    temp = test.Remove(k);
+    temp.OutputArray();
+
+    cout << "- Remove(k, n): ";
+    temp = test.Remove(k, n);
+    temp.OutputArray();
+
+    int oldValue, newValue;
+    cout << "- Input old value: ";
+    cin >> oldValue;
+    cout << "- Input new value: ";
+    cin >> newValue;
+
+    cout << "- Replace(oldValue, newValue): ";
+    temp = test.Replace(oldValue, newValue);
+    temp.OutputArray();
+
+    int value;
+    cout << "- Input value: ";
+    cin >> value;
+
+    cout << "- AddHead(value): ";
+    temp = test.AddHead(value);
+    temp.OutputArray();
+
+    cout << "- AddTail(value): ";
+    temp = test.AddTail(value);
+    temp.OutputArray();
+
+    cout << "- Insert(k, value): ";
+    temp = test.Insert(k, value);
+    temp.OutputArray();
+
+    cout << "- Max(): " << test.Max() << ".\n";
+    cout << "- Min(): " << test.Min() << ".\n";
+
+    cout << "- Ascending(): ";
+    temp = test.Ascending();
+    temp.OutputArray();
+
+    cout << "- Descending(): ";
+    temp = test.Descending();
+    temp.OutputArray();
+
+    if (test.IsSymmetry())
+        cout << "- IsSymmetry(): True.\n";
+    else
+        cout << "- IsSymmetry(): False.\n";
+
+    cout << "- MoveForward(): ";
+    temp = test.MoveForward();
+    temp.OutputArray();
+
+    cout << "- MoveForward(n): ";
+    temp = test.MoveForward(n);
+    temp.OutputArray();
+
+    cout << "- MoveBehind(): ";
+    temp = test.MoveBehind();
+    temp.OutputArray();
+
+    cout << "- MoveBehind(n): ";
+    temp = test.MoveBehind(n);
+    temp.OutputArray();
+
+    return 0;
 }
