@@ -22,7 +22,7 @@ void merge(int *arr, int *temp, int sizeArr, int left, int mid, int right)
 
 void mergeSort(int *arr, int *temp, int sizeArr, int left, int right)
 {
-    if (left > right)
+    if (left >= right)
         return;
     int mid = left + (right - left) / 2;
     mergeSort(arr, temp, sizeArr, left, mid);
@@ -109,8 +109,16 @@ CIntArray::~CIntArray()
 // Checked
 void CIntArray::InputArray()
 {
+    if (m_Array != nullptr)
+    {
+        delete[] m_Array;
+        m_Array = nullptr;
+        m_Length = 0;
+    }
+
     cout << "- Input length: ";
     cin >> m_Length;
+    m_Array = new int[m_Length];
 
     cout << "- Input array: ";
     for (int i = 0; i < m_Length; i++)
@@ -270,18 +278,25 @@ CIntArray CIntArray::Remove()
     }
 
     bool existed[199] = {false};
-    CIntArray ans;
-    ans.m_Length = m_Length;
-    ans.m_Array = new int[ans.m_Length];
-
-    int j = 0;
+    int countUnique = 0;
     for (int i = 0; i < m_Length; i++)
     {
         if (existed[m_Array[i] + 99] == false)
         {
-            existed[m_Array[i] + 99] = true;
-            ans.m_Array[j++] = m_Array[i];
+            existed[m_Array[i] + 99] == true;
+            countUnique++;
         }
+    }
+
+    CIntArray ans;
+    ans.m_Length = countUnique;
+    ans.m_Array = new int[ans.m_Length];
+
+    int j = 0;
+    for (int i = 0; i < 199; i++)
+    {
+        if (existed[i] == true)
+            m_Array[j++] = i - 99;
     }
 
     return ans;
@@ -335,14 +350,18 @@ CIntArray CIntArray::Remove(int k, int n)
     ans.m_Length = m_Length;
     ans.m_Array = new int[ans.m_Length];
 
-    int j = 0;
+    int j = 0, size = 0;
     for (int i = 0; i < m_Length; i++)
     {
         if (i != k)
+        {
             ans.m_Array[j++] = m_Array[i];
+            size++;
+        }
         else
             i += n - 1;
     }
+    ans.m_Length = size;
 
     return ans;
 }
@@ -392,7 +411,7 @@ CIntArray CIntArray::AddTail(int value)
 
     for (int i = 0; i < m_Length; i++)
         ans.m_Array[i] = m_Array[i];
-    ans.m_Array[ans.m_Length] = value;
+    ans.m_Array[ans.m_Length - 1] = value;
 
     return ans;
 }
@@ -450,6 +469,16 @@ CIntArray CIntArray::MoveForward(int n)
         cout << "ERROR: n < 0.\n";
         return *this;
     }
+
+    n = n % m_Length;
+    CIntArray ans;
+    ans.m_Length = m_Length;
+    ans.m_Array = new int[ans.m_Length];
+
+    for (int i = 0; i < m_Length; i++)
+        ans.m_Array[i] = m_Array[(i + n) % m_Length];
+
+    return ans;
 }
 
 CIntArray CIntArray::MoveForward()
@@ -470,6 +499,16 @@ CIntArray CIntArray::MoveBehind(int n)
         cout << "ERROR: n < 0.\n";
         return *this;
     }
+
+    n = n % m_Length;
+    CIntArray ans;
+    ans.m_Length = m_Length;
+    ans.m_Array = new int[ans.m_Length];
+
+    for (int i = 0; i < m_Length; i++)
+        ans.m_Array[(i + n) % m_Length] = m_Array[i];
+
+    return ans;
 }
 
 CIntArray CIntArray::MoveBehind()
