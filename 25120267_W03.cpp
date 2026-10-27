@@ -18,8 +18,8 @@ public:
     CStudent(const CStudent &other);
     CStudent(const string &name, const string &id);
 
-    string getName() { return m_Name; }
-    string getId() { return m_ID; }
+    string getName() const { return m_Name; }
+    string getId() const { return m_ID; }
 
     friend istream &operator>>(istream &in, CStudent &student);
     friend ostream &operator<<(ostream &out, const CStudent &student);
@@ -55,25 +55,30 @@ CStudent::CStudent(const string &name, const string &id)
 istream &operator>>(istream &in, CStudent &student)
 {
     cout << "+ Nhap ho ten sinh vien: ";
-    in >> student.m_Name;
+    getline(in, student.m_Name);
 
     cout << "+ Nhap ma so sinh vien: ";
-    in >> student.m_ID;
+    getline(in, student.m_ID);
 
-    int numberOfSubjects;
+    int soMonHoc;
     cout << "+ Nhap so mon hoc: ";
-    in >> numberOfSubjects;
+    in >> soMonHoc;
+    in.ignore();
 
-    for (int i = 0; i < numberOfSubjects; i++)
+    for (int i = 0; i < soMonHoc; i++)
     {
+        pair<string, pair<int, float>> subject;
+
         cout << "+ Nhap ma mon hoc thu " << i + 1 << ": ";
-        in >> student.m_Subjects[i].first;
+        getline(in, subject.first);
 
         cout << "+ Nhap so tin chi mon hoc thu " << i + 1 << ": ";
-        in >> student.m_Subjects[i].second.first;
+        in >> subject.second.first;
 
         cout << "+ Nhap diem mon hoc thu " << i + 1 << ": ";
-        in >> student.m_Subjects[i].second.second;
+        in >> subject.second.second;
+
+        student.m_Subjects.push_back(subject);
     }
 
     return in;
@@ -91,6 +96,10 @@ float CStudent::AverageGrade() const
         tongDiem += diem * soTinChi;
         tongTinChi += soTinChi;
     }
+
+    if (tongTinChi == 0)
+        return 0;
+
     float diemTrungBinh = tongDiem / tongTinChi;
 
     return diemTrungBinh;
@@ -111,10 +120,10 @@ ostream &operator<<(ostream &out, const CStudent &student)
 
         out << "    . Ma mon hoc: " << maMonHoc << ".\n"
             << "    . So tin chi: " << soTinChi << ".\n"
-            << "    . Diem mon hoc: " << diem << ".\n\n";
+            << "    . Diem mon hoc: " << fixed << setprecision(2) << diem << ".\n\n";
     }
 
-    out << "+ Diem trung binh: " << student.AverageGrade() << ".\n";
+    out << "==> Diem trung binh: " << student.AverageGrade() << ".\n";
 
     return out;
 }
@@ -172,8 +181,10 @@ void CListStudent::Input()
 
     for (int i = 0; i < n; i++)
     {
+        CStudent student;
         cout << "- Nhap sinh vien thu " << i + 1 << ":\n";
-        cin >> m_Students[i];
+        cin >> student;
+        m_Students.push_back(student);
     }
 }
 
@@ -191,13 +202,12 @@ CStudent CListStudent::FindMaxAverageStudent()
 {
     if (m_Students.empty())
     {
-        cout << "List of students is empty.\n";
+        cout << "Danh sach sinh vien rong.\n";
         return CStudent();
     }
 
     CStudent ans = m_Students[0];
     int n = m_Students.size();
-
     for (int i = 1; i < n; i++)
     {
         if (m_Students[i] > ans)
@@ -211,13 +221,12 @@ CStudent CListStudent::FindMinAverageStudent()
 {
     if (m_Students.empty())
     {
-        cout << "List of students is empty.\n";
+        cout << "Danh sach sinh vien rong.\n";
         return CStudent();
     }
 
     CStudent ans = m_Students[0];
     int n = m_Students.size();
-
     for (int i = 1; i < n; i++)
     {
         if (m_Students[i] < ans)
@@ -305,7 +314,7 @@ CStudent CListStudent::FindStudent(string id)
     }
 
     if (!found)
-        cout << "Khong tim thay id.\n";
+        cout << "Khong tim thay sinh vien co ma so " << id << ".\n";
 
     return ans;
 }
