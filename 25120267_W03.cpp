@@ -244,7 +244,7 @@ void CListStudent::SortAscending()
     for (int i = 0; i < n - 1; i++)
     {
         bool swapped = false;
-        for (int j = i; j < n - 1 - i; j++)
+        for (int j = 0; j < n - 1 - i; j++)
         {
             if (m_Students[j] > m_Students[j + 1])
             {
@@ -266,7 +266,7 @@ void CListStudent::SortDescending()
     for (int i = 0; i < n - 1; i++)
     {
         bool swapped = false;
-        for (int j = i; j < n - 1 - i; j++)
+        for (int j = 0; j < n - 1 - i; j++)
         {
             if (m_Students[j] < m_Students[j + 1])
             {
