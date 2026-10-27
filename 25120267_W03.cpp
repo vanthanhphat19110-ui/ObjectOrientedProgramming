@@ -330,10 +330,10 @@ void CListStudent::ClassifyStudent()
         string id = m_Students[i].getId();
         float diemTrungBinh = m_Students[i].AverageGrade();
 
-        cout << "- Ho ten sinh vien: " << name << ".\n"
-             << "- Ma so sinh vien: " << id << ".\n"
-             << "- Diem trung binh: " << diemTrungBinh << ".\n"
-             << "- Hoc luc: ";
+        cout << "+ Ho ten sinh vien: " << name << ".\n"
+             << "+ Ma so sinh vien: " << id << ".\n"
+             << "+ Diem trung binh: " << diemTrungBinh << ".\n"
+             << "+ Hoc luc: ";
 
         if ((diemTrungBinh - 9 >= EPS || fabs(diemTrungBinh - 9) < EPS) && (diemTrungBinh - 10 <= -EPS || fabs(diemTrungBinh - 10) < EPS))
             cout << "Loai Xuat sac.\n\n";
