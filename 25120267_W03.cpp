@@ -77,6 +77,7 @@ istream &operator>>(istream &in, CStudent &student)
 
         cout << "+ Nhap diem mon hoc thu " << i + 1 << ": ";
         in >> subject.second.second;
+        in.ignore();
 
         student.m_Subjects.push_back(subject);
     }
@@ -178,6 +179,7 @@ void CListStudent::Input()
     int n;
     cout << "- Nhap so luong sinh vien: ";
     cin >> n;
+    cin.ignore();
 
     for (int i = 0; i < n; i++)
     {
@@ -289,13 +291,13 @@ void CListStudent::DeleteStudent(string id)
         {
             found = true;
             m_Students.erase(it);
-            cout << "Da xoa sinh vien co ma so: " << id << ".\n";
+            cout << "==> Da xoa sinh vien co ma so: " << id << ".\n";
             break;
         }
     }
 
     if (!found)
-        cout << "Khong tim thay sinh vien co ma so " << id << ".\n";
+        cout << "==> Khong tim thay sinh vien co ma so " << id << ".\n";
 }
 
 CStudent CListStudent::FindStudent(string id)
@@ -314,7 +316,7 @@ CStudent CListStudent::FindStudent(string id)
     }
 
     if (!found)
-        cout << "Khong tim thay sinh vien co ma so " << id << ".\n";
+        cout << "==> Khong tim thay sinh vien co ma so " << id << ".\n";
 
     return ans;
 }
@@ -352,5 +354,36 @@ void CListStudent::ClassifyStudent()
 
 int main()
 {
+    CListStudent list;
+    list.Input();
+    list.Output();
+
+    cout << "- Sinh vien co diem trung binh cao nhat:\n"
+         << list.FindMaxAverageStudent();
+
+    cout << "- Sinh vien co diem trung binh thap nhat:\n"
+         << list.FindMinAverageStudent();
+
+    list.SortAscending();
+    cout << "- Sap xep tang dan theo diem trung binh:\n";
+    list.Output();
+
+    list.SortDescending();
+    cout << "- Sap xep giam dan theo diem trung binh:\n";
+    list.Output();
+
+    string id;
+    cout << "- Nhap id can xoa: ";
+    getline(cin, id);
+    list.DeleteStudent(id);
+
+    cout << "- Nhap id can tim: ";
+    getline(cin, id);
+    cout << "- Sinh vien can tim la:\n"
+         << list.FindStudent(id);
+
+    cout << "- Phan loai sinh vien:\n";
+    list.ClassifyStudent();
+
     return 0;
 }
