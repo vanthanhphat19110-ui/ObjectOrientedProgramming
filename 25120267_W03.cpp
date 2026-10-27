@@ -4,7 +4,7 @@
 #include <cmath>
 #include <iomanip>
 using namespace std;
-const int EPS = 0.001;
+const float EPS = 0.001;
 
 class CStudent
 {
@@ -273,6 +273,20 @@ void CListStudent::SortDescending()
 
 void CListStudent::DeleteStudent(string id)
 {
+    bool found = false;
+    for (auto it = m_Students.begin(); it != m_Students.end(); it++)
+    {
+        if (it->getId() == id)
+        {
+            found = true;
+            m_Students.erase(it);
+            cout << "Da xoa sinh vien co ma so: " << id << ".\n";
+            break;
+        }
+    }
+
+    if (!found)
+        cout << "Khong tim thay sinh vien co ma so " << id << ".\n";
 }
 
 CStudent CListStudent::FindStudent(string id)
