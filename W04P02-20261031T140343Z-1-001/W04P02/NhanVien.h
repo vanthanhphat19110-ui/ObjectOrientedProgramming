@@ -2,6 +2,7 @@
 #define _NHANVIEN_
 
 #include <iostream>
+#include <string>
 using namespace std;
 
 class NhanVien
