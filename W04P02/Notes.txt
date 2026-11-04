@@ -13,4 +13,12 @@ kế thừa
 4. Viết hàm nhập từ keyboard class NVSanXuat
 5. Viết hàm nhập từ keyboard class NVCongNhat
 6. Viết hàm tính lương của NVSanXuat 
+
 7. Viết hàm tính lương của NVCongNhat
+
+==========
+
+Tạo class CongTy, chứa danh sách nhân viên trong 1 mảng duy nhất
+1. Viết hàm nhập danh sách nhân viên
+2. In danh sách nhân viên ra màn hình 
+3. Tính tổng lương trả cho toàn bộ nhân viên trong tháng 
