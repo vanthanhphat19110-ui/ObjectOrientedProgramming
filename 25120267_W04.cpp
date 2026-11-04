@@ -173,14 +173,158 @@ bool CMyTime::operator<=(const CMyTime &other) const
 
 void CMyTime::ShowTime()
 {
+    while (true)
+    {
+        system("cls"); // xóa màn hình
+        cout << *this << "\n";
+        cout << "Press ESC to stop.\n";
+
+        if (_kbhit())
+        {
+            char key = _getch();
+            if (key == 27) // ESC = 27
+                break;
+        }
+
+        Sleep(1000); // chờ 1s
+        ++(*this);   // tăng 1s
+    }
 }
 
 void CMyTime::CountDown()
 {
+    bool isPaused = false;
+    while (true)
+    {
+        system("cls");
+        cout << *this << "\n";
+
+        if (m_Hour == 0 && m_Minute == 0 && m_Second == 0)
+        {
+            cout << "==> Time's up.\n";
+            break;
+        }
+
+        if (isPaused)
+        {
+            cout << "Press ENTER to continue.\n"
+                 << "Press ESC to stop.\n";
+        }
+        else
+        {
+            cout << "Press SPACE to pause.\n"
+                 << "Press ESC to stop.\n";
+        }
+
+        if (_kbhit())
+        {
+            char key = _getch();
+            if (key == 27) // ESC = 27
+                break;
+            if (key == 32) // SPACE = 32
+                isPaused = true;
+            if (key == 13) // ENTER = 13
+                isPaused = false;
+        }
+
+        if (!isPaused)
+            (*this)--;
+        Sleep(1000);
+    }
 }
 
 void CMyTime::RunStopwatch()
 {
+    CMyTime current(0, 0, 0);
+    vector<CMyTime> save;
+
+    bool isRunning = false;
+    bool isPaused = false;
+    bool isStopped = false;
+
+    while (true)
+    {
+        system("cls");
+        cout << "Current time: " << *this << ".\n";
+
+        if (isStopped)
+        {
+            cout << "- Total time: " << *this << ".\n";
+            cout << "- Saved timelines:\n";
+
+            for (int i = 0; i < save.size(); i++)
+                cout << "   " << save[i] << "\n";
+
+            cout << "Press ESC to reset 00:00:00.\n";
+        }
+        else
+        {
+            cout << "=== Sports Watch Instruction ===\n"
+                 << "[S/s]: start.\n"
+                 << "[P/p]: pause.\n"
+                 << "[R/r]: continue.\n"
+                 << "[L/l]: save.\n"
+                 << "[T/t]: stop.\n"
+                 << "[ESC]: reset 00:00:00";
+        }
+
+        if (_kbhit())
+        {
+            char key = _getch();
+            key = tolower(key);
+
+            if (key == 27) // ESC = 27
+            {
+                current = CMyTime(0, 0, 0);
+                save.clear();
+                isRunning = false;
+                isPaused = false;
+                isStopped = false;
+            }
+            else if (!isStopped)
+            {
+                if (key == 's')
+                {
+                    isRunning = true;
+                    isPaused = false;
+                }
+                else if (isRunning && key == 'p')
+                {
+                    isPaused = true;
+                }
+                else if (isRunning && key == 'r')
+                {
+                    isPaused = false;
+                }
+                else if (isRunning && key == 'l')
+                {
+                    save.push_back(current);
+                }
+                else if (isRunning && key == 't')
+                {
+                    isStopped = true;
+                    isRunning = false;
+                }
+            }
+        }
+
+        if (isRunning && !isStopped && !isPaused)
+        {
+            current.m_Second++;
+            if (current.m_Second == 60)
+            {
+                current.m_Second = 0;
+                current.m_Minute++;
+                if (current.m_Minute == 60)
+                {
+                    current.m_Minute = 0;
+                    current.m_Hour++;
+                }
+            }
+        }
+
+        Sleep(1000);
+    }
 }
 
 CMyTime &CMyTime::operator+=(int n)
@@ -228,7 +372,7 @@ void CMyTime::readFile(const string &filename, vector<CMyTime> &myTimes)
     fin.close();
 }
 
-void writeToFileSorted(const string &filename, const vector<CMyTime> &myTimes)
+void writeToFileSorted(const string &filename, vector<CMyTime> &myTimes)
 {
     if (myTimes.empty())
         return;
