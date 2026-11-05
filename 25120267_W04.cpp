@@ -51,7 +51,7 @@ public:
     CMyTime operator-(const CMyTime &other) const; // trừ hai thời gian
 
     // Bài tập thêm.
-    void readFile(const string &filename, vector<CMyTime> &myTimes);
+    static void readFile(const string &filename, vector<CMyTime> &myTimes);
 };
 
 // Constructors.
@@ -122,17 +122,17 @@ CMyTime &CMyTime::operator++()
 CMyTime CMyTime::operator--(int)
 {
     CMyTime ans(*this);
-    ans.m_Second--;
-    if (ans.m_Second < 0)
+    m_Second--;
+    if (m_Second < 0)
     {
-        ans.m_Second = 59;
-        ans.m_Minute--;
-        if (ans.m_Minute < 0)
+        m_Second = 59;
+        m_Minute--;
+        if (m_Minute < 0)
         {
-            ans.m_Minute = 59;
-            ans.m_Hour--;
-            if (ans.m_Hour < 0)
-                ans.m_Hour = 23;
+            m_Minute = 59;
+            m_Hour--;
+            if (m_Hour < 0)
+                m_Hour = 23;
         }
     }
     return ans;
@@ -245,11 +245,11 @@ void CMyTime::RunStopwatch()
     while (true)
     {
         system("cls");
-        cout << "Current time: " << *this << ".\n";
+        cout << "Current time: " << current << ".\n";
 
         if (isStopped)
         {
-            cout << "- Total time: " << *this << ".\n";
+            cout << "- Total time: " << current << ".\n";
             cout << "- Saved timelines:\n";
 
             for (int i = 0; i < save.size(); i++)
@@ -259,13 +259,13 @@ void CMyTime::RunStopwatch()
         }
         else
         {
-            cout << "=== Sports Watch Instruction ===\n"
+            cout << "===== Sports Watch Instruction =====\n"
                  << "[S/s]: start.\n"
                  << "[P/p]: pause.\n"
                  << "[R/r]: continue.\n"
                  << "[L/l]: save.\n"
                  << "[T/t]: stop.\n"
-                 << "[ESC]: reset 00:00:00";
+                 << "[ESC]: reset 00:00:00.\n";
         }
 
         if (_kbhit())
@@ -403,10 +403,10 @@ void writeToFileResult(const string &filename, const vector<CMyTime> &myTimes)
     {
         totalTime = totalTime + myTimes[i];
 
-        if (myTimes[i] > fastestTime)
+        if (myTimes[i] < fastestTime)
             fastestTime = myTimes[i];
 
-        if (myTimes[i] < slowestTime)
+        if (myTimes[i] > slowestTime)
             slowestTime = myTimes[i];
     }
 
@@ -427,5 +427,41 @@ void writeToFileResult(const string &filename, const vector<CMyTime> &myTimes)
 
 int main()
 {
+
+    /* 01. Read file INPUT.txt */
+    ifstream fin("INPUT.txt");
+
+    if (!fin)
+    {
+        cout << "Cannot open file \"INPUT.txt\".\n";
+        return -1;
+    }
+
+    CMyTime time;
+    fin >> time;
+    cout << "Time: " << time << ".\n";
+
+    fin.close();
+
+    /* 02. Read file LIST.txt, write file SORTED.txt */
+    // vector<CMyTime> listTimes;
+    // CMyTime::readFile("LIST.txt", listTimes);
+    // writeToFileSorted("SORTED.txt", listTimes);
+
+    /* 03. Read file LAPS.txt, write file RESULT.txt */
+    // vector<CMyTime> lapsTimes;
+    // CMyTime::readFile("LAPS.txt", lapsTimes);
+    // writeToFileResult("RESULT.txt", lapsTimes);
+
+    /* 04. ShowTime() */
+    // time.ShowTime();
+
+    /* 05. CountDown() */
+    // time.CountDown();
+
+    /* 06. RunStopWatch() */
+    // CMyTime dummy;
+    // dummy.RunStopwatch();
+
     return 0;
 }
