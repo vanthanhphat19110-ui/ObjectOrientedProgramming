@@ -1,3 +1,4 @@
+'''mermaid
 classDiagram
     class HoSoBenhAn {
         -vector~string~ log
@@ -53,3 +54,4 @@ classDiagram
     BenhNhan <|-- BenhNhanNoiTru : Kế thừa
     BenhNhan *-- HoSoBenhAn : Hợp thành (1..1)
     BenhVien o-- BenhNhan : Kết tập (0..*)
+'''
